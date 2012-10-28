@@ -55,7 +55,8 @@ public class ConnectionHandler implements Runnable {
 	/**
 	 * @return the socket
 	 */
-	public Socket getSocket() {
+	public Socket getSocket() 
+	{
 		return socket;
 	}
 
@@ -123,6 +124,7 @@ public class ConnectionHandler implements Runnable {
 				// For any other error, we will create bad request response as well
 				response = HttpResponseFactory.create400BadRequest(Protocol.CLOSE);
 			}
+			//retry 
 			for (int i = tries; i > 0; i--)
 			{
 
@@ -213,6 +215,7 @@ public class ConnectionHandler implements Runnable {
 				// TODO: So far response could be null for protocol version mismatch.
 				// So this is a temporary patch for that problem and should be removed
 				// after a response object is created for protocol version mismatch.
+				//more retry 
 				if(response == null) 
 				{
 					if (tries > 0)
