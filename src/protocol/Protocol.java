@@ -90,7 +90,8 @@ public class Protocol {
      * e.g. <tt>SimpleWebServer(SWS)/1.0.0 (Mac OS X/10.5.8/i386)</tt>
      * @return
      */
-	public static String getServerInfo() {
+	public static String getServerInfo() 
+	{
 		String os = System.getProperty("os.name"); // e.g. Mac OSX, Ubuntu, etc.
 		String osVersion = System.getProperty("os.version"); // e.g. 10.5, 10.0.4, etc
 		String architecture = System.getProperty("os.arch"); // e.g. i386, x86_64, etc

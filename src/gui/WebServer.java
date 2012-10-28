@@ -70,7 +70,7 @@ public class WebServer extends JFrame
 		public void run() 
 		{
 			while(!stop)
-{
+			{
 				// Poll if server is not null and server is still accepting connections
 				if(server != null && !server.isStoped()) 
 				{
