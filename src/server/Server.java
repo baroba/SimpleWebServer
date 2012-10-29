@@ -23,9 +23,15 @@ package server;
 
 import gui.WebServer;
 
+import java.awt.List;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * This represents a welcoming server for the incoming
@@ -42,7 +48,12 @@ public class Server implements Runnable
 	
 	private long connections;
 	private long serviceTime;
-	
+	private HashMap<InetAddress, Integer> hashmap;
+	private ArrayList<Thread> threadlist;
+	private ArrayList<InetAddress> inetlist;
+	private int ActiveConnections;
+	private LinkedList<Thread> ThreadQueue;
+	private LinkedList<InetAddress> inetQueue;
 	private WebServer window;
 	/**
 	 * @param rootDirectory
@@ -56,6 +67,12 @@ public class Server implements Runnable
 		this.connections = 0;
 		this.serviceTime = 0;
 		this.window = window;
+		this.hashmap=new HashMap<InetAddress, Integer>();
+		this.threadlist=new ArrayList<Thread>();
+		this.inetlist=new ArrayList<InetAddress>();
+		this.ActiveConnections=0;
+		this.ThreadQueue=new LinkedList<Thread>();
+		this.inetQueue=new LinkedList<InetAddress>();
 	}
 
 	/**
@@ -133,14 +150,37 @@ public class Server implements Runnable
 				// Listen for incoming socket connection
 				// This method block until somebody makes a request
 				Socket connectionSocket = this.welcomeSocket.accept();
-				
+				Integer x= this.hashmap.get(connectionSocket.getInetAddress());
+				for (int i = 0; i < this.ActiveConnections; i++) {
+					if(!this.threadlist.get(i).isAlive()){
+						this.threadlist.remove(i);
+						this.hashmap.put(this.inetlist.get(i), this.hashmap.get(this.inetlist.get(i))-1);
+						this.inetlist.remove(i);
+						i--;
+						this.ActiveConnections--;
+					}
+							
+				}
+				if(x>=10)
+					continue;
+				this.hashmap.put(connectionSocket.getInetAddress(), x++);
 				// Come out of the loop if the stop flag is set
 				if(this.stop)
 					break;
 				
 				// Create a handler for this incoming connection and start the handler in a new thread
 				ConnectionHandler handler = new ConnectionHandler(this, connectionSocket);
-				new Thread(handler).start();
+				this.ActiveConnections++;
+				Thread newthread=new Thread(handler);
+				this.ThreadQueue.add(newthread);
+				this.inetQueue.add(connectionSocket.getInetAddress());
+				while (this.ActiveConnections<20||!this.ThreadQueue.isEmpty()) {
+					Thread runt=this.ThreadQueue.pop();
+					runt.run();
+					this.threadlist.add(runt);
+					this.inetlist.add(this.inetQueue.pop());
+					this.ActiveConnections++;
+				}
 			}
 			this.welcomeSocket.close();
 		}
