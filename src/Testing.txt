@@ -1,0 +1,6 @@
+Availability
+With in the bounds of the testing that we did we where unable to crash the client with the given dos attacks.
+performance
+the lantency is slightly lower becuse we limit the number of threads that can be active at a time. the memory usage is much lower becuse of it. the through put has a sort of cap on it from the number of active threads at a time but it would only be a problem in large scall testing that we can't do
+Security
+We were not able to make the project fail with the testing that we did so that is pretty good security.
